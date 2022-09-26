@@ -149,7 +149,7 @@ def run(
             if len(det):
                 # Rescale boxes from img_size to im0 size
                 det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
-                LOGGER.info(f'bozhang debug internal {det}')
+                LOGGER.info(f'bozhang debug internal {det}, {path}, {im}, {im0s}, {vid_cap}, {s}')
                 
 
                 # Print results
