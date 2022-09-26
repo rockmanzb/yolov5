@@ -199,7 +199,7 @@ def run(
 
         # Print time (inference-only)
         LOGGER.info(f'{s}Done. ({t3 - t2:.3f}s) bozhang')
-        LOGGER.info(f'bozhang debug internal {im}')
+        LOGGER.info(f'bozhang debug internal {im0s}')
 
     # Print results
     t = tuple(x / seen * 1E3 for x in dt)  # speeds per image
