@@ -99,9 +99,11 @@ def run(
         cudnn.benchmark = True  # set True to speed up constant image size inference
         dataset = LoadStreams(source, img_size=imgsz, stride=stride, auto=pt)
         bs = len(dataset)  # batch_size
+        LOGGER.info(f'bozhang debug webcam')
     else:
         dataset = LoadImages(source, img_size=imgsz, stride=stride, auto=pt)
         bs = 1  # batch_size
+        LOGGER.info(f'bozhang debug no webcam')
     vid_path, vid_writer = [None] * bs, [None] * bs
 
     # Run inference
