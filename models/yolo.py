@@ -73,6 +73,7 @@ class Detect(nn.Module):
                     y = torch.cat((xy, wh, conf), 4)
                 z.append(y.view(bs, -1, self.no))
         # print("bozhang yolov5 x=", "bozhang yolov5 y=")
+        print(x, "bozhang yolov5") if self.training else print((torch.cat(z, 1),), "bozhang yolov5") if self.export else print((torch.cat(z, 1), x), "bozhang yolov5")
 
         return x if self.training else (torch.cat(z, 1),) if self.export else (torch.cat(z, 1), x)
 
@@ -177,7 +178,6 @@ class Model(nn.Module):
             elif flips == 3:
                 x = img_size[1] - x  # de-flip lr
             p = torch.cat((x, y, wh, p[..., 4:]), -1)
-        print(p, "bozhang pred")
         return p
 
     def _clip_augmented(self, y):
