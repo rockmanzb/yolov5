@@ -72,7 +72,7 @@ class Detect(nn.Module):
                     wh = (wh * 2) ** 2 * self.anchor_grid[i]  # wh
                     y = torch.cat((xy, wh, conf), 4)
                 z.append(y.view(bs, -1, self.no))
-                print(x, y, "bozhang yolov5")
+                print("bozhang yolov5 x=", x, "bozhang yolov5 y=", y)
 
         return x if self.training else (torch.cat(z, 1),) if self.export else (torch.cat(z, 1), x)
 
