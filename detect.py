@@ -166,7 +166,7 @@ def run(
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
                     print("bozhang center_point", center_point)
                     xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()
-                    center_point_normalized = round((xywh[0]+xywh[2])/2), round((xywh[1]+xywh[3])/2)
+                    center_point_normalized = (xywh[0]+xywh[2])/2, (xywh[1]+xywh[3])/2
                     print("bozhang center_point_normalized", center_point_normalized)
                     if save_txt:  # Write to file
                         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
