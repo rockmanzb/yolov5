@@ -164,7 +164,7 @@ def run(
                 for *xyxy, conf, cls in reversed(det):
                     c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
-                    print("bozhang center_point", center_point, names[c])
+                    print("bozhang center_point", center_point)
                     center_point_normalized = center_point[0]/1920.0, center_point[1]/1080.0
                     print("bozhang center_point_normalized", center_point_normalized)
                     if save_txt:  # Write to file
