@@ -163,9 +163,11 @@ def run(
                 # Write results
                 for *xyxy, conf, cls in reversed(det):
                     c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
+                    print(c1, c2)
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
                     print("bozhang center_point", center_point)
                     xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()
+                    print(xywh)
                     center_point_normalized = (xywh[0]+xywh[2])/2, (xywh[1]+xywh[3])/2
                     print("bozhang center_point_normalized", center_point_normalized)
                     if save_txt:  # Write to file
