@@ -256,7 +256,9 @@ def parse_opt():
 
 def main(opt, image="1280", weights_input="yolov5l6_trained_600images.pt", src="08fd33_6.mp4", prj="DFL"):
     check_requirements(exclude=('tensorboard', 'thop'))
-    run(**vars(opt), imgsz=image, weights=weights_input, source=src, project=prj)
+    v = vars(opt)
+    v.update({'imgsz': image, 'weights':weights_input, 'source':src, 'project':prj})
+    run(**v)
 
 
 if __name__ == "__main__":
