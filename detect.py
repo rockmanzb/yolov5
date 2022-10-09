@@ -180,12 +180,13 @@ def run(
                             ball_pos += 1
                         else:
                             ball_pos = 0
-                            pre_center_point = center_point
+                            pre_center_point = center_point 
+                            pre_xyxy = list(xyxy)
                     else:
                         ball_pos = 0
                         pre_center_point = center_point
-                            
-                    print ("bozhang final center_point", center_point, gn, xyxy, pre_center_point)    
+                        pre_xyxy = list(xyxy)
+                    print ("bozhang final center_point", center_point, gn, xyxy, pre_xyxy)    
                     center_point_normalized = center_point[0]/gn[0], center_point[1]/gn[1]
                     print("bozhang center_point_normalized", center_point_normalized) 
                     if save_txt:  # Write to file
