@@ -167,7 +167,7 @@ def run(
                 for *xyxy, conf, cls in reversed(det):
                     c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
-                    print("bozhang center_point", center_point, gn)
+                    print("bozhang center_point", center_point, gn, xyxy)
                     if ball_pos == 100:
                         pre_center_point = center_point
                         pre_xyxy = list(xyxy)
@@ -183,7 +183,7 @@ def run(
                     else:
                         ball_pos = 0
                             
-                    print ("bozhang final center_point", center_point, gn)    
+                    print ("bozhang final center_point", center_point, gn, xyxy)    
                     center_point_normalized = center_point[0]/gn[0], center_point[1]/gn[1]
                     print("bozhang center_point_normalized", center_point_normalized)
                     pre_center_point = center_point
@@ -197,8 +197,8 @@ def run(
                         c = int(cls)  # integer class
                         label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
                         annotator.box_label(xyxy, label, color=colors(c, True))
-                    #if save_crop:
-                    #    save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
+                    if save_crop:
+                        save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
                     
             # Stream results
             im0 = annotator.result()
