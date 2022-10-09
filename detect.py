@@ -32,6 +32,13 @@ from pathlib import Path
 import torch
 import torch.backends.cudnn as cudnn
 
+import pandas as pd
+import numpy as np
+from scipy import stats
+df = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
+print (df)
+
+
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
@@ -165,6 +172,11 @@ def run(
                     c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
                     print("bozhang center_point", center_point, gn)
+                    df.insert(0, center_point)
+                    df.pop()
+                    z_score = stats.zscore(lstInputData)[0]
+                    if np.abs(z_score[0]) < 1 and np.abs(z_score[1]) < 1:
+                        print ("bozhang good ball", center_point, gn)
                     center_point_normalized = center_point[0]/gn[0], center_point[1]/gn[1]
                     print("bozhang center_point_normalized", center_point_normalized)
                     if save_txt:  # Write to file
