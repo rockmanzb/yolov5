@@ -164,7 +164,7 @@ def run(
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
 
                 # Write results
-                for *xyxy, conf, cls in det:
+                for *xyxy, conf, cls in reversed(det):
                     c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
                     print("bozhang center_point", center_point, gn)
@@ -193,13 +193,12 @@ def run(
                         #with open(f'{txt_path}.txt', 'a') as f:
                             #f.write(('%g ' * len(line)).rstrip() % line + '\n')
 
-                    if save_img or save_crop or view_img:  # Add bbox to image
-                        c = int(cls)  # integer class
-                        label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
-                        annotator.box_label(xyxy, label, color=colors(c, True))
-                    if save_crop:
-                        save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
-                    break
+                    #if save_img or save_crop or view_img:  # Add bbox to image
+                    #    c = int(cls)  # integer class
+                    #    label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
+                    #    annotator.box_label(xyxy, label, color=colors(c, True))
+                    #if save_crop:
+                    #    save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
                     
             # Stream results
             im0 = annotator.result()
