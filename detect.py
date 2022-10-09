@@ -32,12 +32,6 @@ from pathlib import Path
 import torch
 import torch.backends.cudnn as cudnn
 
-import pandas as pd
-import numpy as np
-from scipy import stats
-df = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
-print (df)
-
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
@@ -141,6 +135,7 @@ def run(
         # pred = utils.general.apply_classifier(pred, classifier_model, im, im0s)
 
         # Process predictions
+        ball_pos = 0
         for i, det in enumerate(pred):  # per image
             seen += 1
             if webcam:  # batch_size >= 1
@@ -172,15 +167,19 @@ def run(
                     c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
                     print("bozhang center_point", center_point, gn)
-                    df.insert(0, center_point)
-                    df.pop()
-                    print ("bozhang", df)
-                    z_score = stats.zscore(df)[0]
-                    print ("bozhang zscore", z_score)
-                    if np.abs(z_score[0]) < 1 and np.abs(z_score[1]) < 1:
-                        print ("bozhang good ball", center_point, gn)
+                    if ball_pos < 10:
+                        if abs(center_point[0] - pre_center_point[0]) > 40 or abs(center_point[1] - pre_center_point[1]) > 30:
+                            center_point = pre_center_point
+                            ball_pos += 1
+                        else:
+                            ball_pos = 0
+                    else:
+                        ball_pos = 0
+                            
+                    print ("bozhang final center_point", center_point, gn)    
                     center_point_normalized = center_point[0]/gn[0], center_point[1]/gn[1]
                     print("bozhang center_point_normalized", center_point_normalized)
+                    pre_center_point = center_point
                     if save_txt:  # Write to file
                         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
                         #line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
