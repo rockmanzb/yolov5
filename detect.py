@@ -180,13 +180,14 @@ def run(
                             ball_pos += 1
                         else:
                             ball_pos = 0
+                            pre_center_point = center_point
                     else:
                         ball_pos = 0
+                        pre_center_point = center_point
                             
-                    print ("bozhang final center_point", center_point, gn, xyxy)    
+                    print ("bozhang final center_point", center_point, gn, xyxy, pre_center_point)    
                     center_point_normalized = center_point[0]/gn[0], center_point[1]/gn[1]
-                    print("bozhang center_point_normalized", center_point_normalized)
-                    pre_center_point = center_point
+                    print("bozhang center_point_normalized", center_point_normalized) 
                     if save_txt:  # Write to file
                         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
                         #line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
