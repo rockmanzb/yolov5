@@ -277,7 +277,7 @@ def parse_opt():
     return opt
 
 
-def main(opt, image=[640, 1280], weights_input="yolov5l6_trained_600images.pt", src="08fd33_6.mp4", prj="DFL"):
+def main(opt, image=[640, 1280], weights_input="yolov5l6_trained_600images.pt", src="08fd33_1.mp4", prj="DFL"):
     check_requirements(exclude=('tensorboard', 'thop'))
     v = vars(opt)
     v.update({'imgsz': image, 'weights':weights_input, 'source':src, 'project':prj})
