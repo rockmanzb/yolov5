@@ -170,12 +170,12 @@ def run(
                     print("bozhang center_point", center_point, gn)
                     if ball_pos == 100:
                         pre_center_point = center_point
-                        #pre_xyxy = list(xyxy)
+                        pre_xyxy = list(xyxy)
                         ball_pos = 0
                     if ball_pos < 10:
                         if abs(center_point[0] - pre_center_point[0]) > 40 or abs(center_point[1] - pre_center_point[1]) > 30:
                             center_point = pre_center_point
-                            #xyxy = pre_xyxy
+                            xyxy = pre_xyxy
                             ball_pos += 1
                         else:
                             ball_pos = 0
