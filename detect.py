@@ -175,6 +175,7 @@ def run(
                     df.insert(0, center_point)
                     df.pop()
                     z_score = stats.zscore(df)[0]
+                    print ("bozhang zscore", z_score)
                     if np.abs(z_score[0]) < 1 and np.abs(z_score[1]) < 1:
                         print ("bozhang good ball", center_point, gn)
                     center_point_normalized = center_point[0]/gn[0], center_point[1]/gn[1]
