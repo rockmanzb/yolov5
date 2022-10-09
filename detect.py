@@ -174,6 +174,7 @@ def run(
                     print("bozhang center_point", center_point, gn)
                     df.insert(0, center_point)
                     df.pop()
+                    print ("bozhang", df)
                     z_score = stats.zscore(df)[0]
                     print ("bozhang zscore", z_score)
                     if np.abs(z_score[0]) < 1 and np.abs(z_score[1]) < 1:
