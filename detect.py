@@ -176,6 +176,7 @@ def run(
                         if abs(center_point[0] - pre_center_point[0]) > 40 or abs(center_point[1] - pre_center_point[1]) > 30:
                             center_point = pre_center_point
                             xyxy = pre_xyxy
+                            print ("bozhang debug change ball pos")
                             ball_pos += 1
                         else:
                             ball_pos = 0
