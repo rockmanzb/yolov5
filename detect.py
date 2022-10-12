@@ -235,7 +235,7 @@ def run(
                         ball_pos = 0
                     R = 0.01**2
                     x, P = kalman_xy(x, P, center_point, R)
-                    center_point_final = [x[0][0], x[1][0]]
+                    center_point_final = [x.item((0,0)), x.item(1,0)]
                     xyxy[0] = center_point_final[0]-6
                     xyxy[1] = center_point_final[1]-6
                     xyxy[2] = center_point_final[0]+6
