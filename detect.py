@@ -84,7 +84,7 @@ def run(
     kalman = cv2.KalmanFilter(2,2)
     kalman.measurementMatrix = np.array([[1,0],[0,1]],np.float32)
     kalman.transitionMatrix = np.array([[1,0],[0,1]], np.float32)
-    kalman.processNoiseCov = np.array([[1,0],[0,1]], np.float32) * 1e-3
+    kalman.processNoiseCov = np.array([[1,0],[0,1]], np.float32) * 1e-5
     kalman.measurementNoiseCov = np.array([[1,0],[0,1]], np.float32) * 0.01
     start = 1
     frame_cnt = 0
