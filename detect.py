@@ -183,7 +183,7 @@ def run(
                     pos = np.array([center_point], np.float32)
                     print (pos)
                     print("bozhang center_point", center_point, gn, xyxy)
-                    if start:
+                    if start==1:
                         kalman.statePre =  pos
                         x = center_point
                         #x = kalman.correct(mes)
