@@ -179,7 +179,7 @@ def run(
                 # Write results
                 for *xyxy, conf, cls in det:
                     c1, c2 = (xyxy[0], xyxy[1]), (xyxy[2], xyxy[3])
-                    center_point = (c1[0]+c2[0])/2.0), (c1[1]+c2[1])/2.0)
+                    center_point = (c1[0]+c2[0])/2.0, (c1[1]+c2[1])/2.0
                     pos = np.array([center_point], np.float32)
                     print (pos)
                     print("bozhang center_point", center_point, gn, xyxy)
