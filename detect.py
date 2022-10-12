@@ -85,9 +85,11 @@ def run(
     # R为下一轮的测量误差
     R = 0.1
     # Accumulated_Error为上一轮的估计误差，具体呈现为所有误差的累计
-    global Accumulated_Error = 1
+    global Accumulated_Error
+    Accumulated_Error = 1
     # 初始旧值
-    global kalman_adc_old = [0,0]
+    global kalman_adc_old
+    kalman_adc_old = [0,0]
     SCOPE = 50
     
     def kalman(ADC_Value):
