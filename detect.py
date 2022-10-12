@@ -35,63 +35,6 @@ import torch.backends.cudnn as cudnn
 import numpy as np
 import matplotlib.pyplot as plt
 
-def kalman_xy(x, P, measurement, R,
-              motion = np.matrix('0. 0. 0. 0.').T,
-              Q = np.matrix(np.eye(4))):
-    """
-    Parameters:    
-    x: initial state 4-tuple of location and velocity: (x0, x1, x0_dot, x1_dot)
-    P: initial uncertainty convariance matrix
-    measurement: observed position
-    R: measurement noise 
-    motion: external motion added to state vector x
-    Q: motion noise (same shape as P)
-    """
-    return kalman(x, P, measurement, R, motion, Q,
-                  F = np.matrix('''
-                      1. 0. 1. 0.;
-                      0. 1. 0. 1.;
-                      0. 0. 1. 0.;
-                      0. 0. 0. 1.
-                      '''),
-                  H = np.matrix('''
-                      1. 0. 0. 0.;
-                      0. 1. 0. 0.'''))
-
-def kalman(x, P, measurement, R, motion, Q, F, H):
-    '''
-    Parameters:
-    x: initial state
-    P: initial uncertainty convariance matrix
-    measurement: observed position (same shape as H*x)
-    R: measurement noise (same shape as H)
-    motion: external motion added to state vector x
-    Q: motion noise (same shape as P)
-    F: next state function: x_prime = F*x
-    H: measurement function: position = H*x
-
-    Return: the updated and predicted new values for (x, P)
-
-    See also http://en.wikipedia.org/wiki/Kalman_filter
-
-    This version of kalman can be applied to many different situations by
-    appropriately defining F and H 
-    '''
-    # UPDATE x, P based on measurement m    
-    # distance between measured and current position-belief
-    y = np.matrix(measurement).T - H * x
-    S = H * P * H.T + R  # residual convariance
-    K = P * H.T * S.I    # Kalman gain
-    x = x + K*y
-    I = np.matrix(np.eye(F.shape[0])) # identity matrix
-    P = (I - K*H)*P
-
-    # PREDICT x, P based on motion
-    x = F*x + motion
-    P = F*P*F.T + Q
-
-    return x, P
-
 
 
 FILE = Path(__file__).resolve()
@@ -137,10 +80,39 @@ def run(
         half=False,  # use FP16 half-precision inference
         dnn=False,  # use OpenCV DNN for ONNX inference
 ):
-    x = np.matrix('0. 0. 0. 0.').T 
-    P = np.matrix(np.eye(4))*1000 # initial uncertainty
-    R = 0.01**2
     central_point_final = [0, 0]
+    Q = 0.00001
+    # R为下一轮的测量误差
+    R = 0.1
+    # Accumulated_Error为上一轮的估计误差，具体呈现为所有误差的累计
+    Accumulated_Error = 1
+    # 初始旧值
+    kalman_adc_old = [0,0]
+    SCOPE = 50
+    def kalman(ADC_Value):
+        global kalman_adc_old
+        global Accumulated_Error
+        # 新的值相比旧的值差太大时进行跟踪
+        Old_Input = [0, 0]
+        kalman_adc = [0,0]
+        if ( abs(ADC_Value[0]-kalman_adc_old[0])/SCOPE + abs(ADC_Value[1]-kalman_adc_old[1])/SCOPE ) > 0.25:
+            Old_Input[0] = ADC_Value[0]*0.382 + kalman_adc_old[0]*0.618
+            Old_Input[1] = ADC_Value[1]*0.382 + kalman_adc_old[1]*0.618
+        else:
+            Old_Input = kalman_adc_old
+        # 上一轮的 总误差=累计误差^2+预估误差^2
+        Old_Error_All = (Accumulated_Error**2 + Q**2)**(1/2)
+        # R为这一轮的预估误差
+        # H为利用均方差计算出来的双方的相信度
+        H = Old_Error_All**2/(Old_Error_All**2 + R**2)
+        # 旧值 + 1.00001/(1.00001+0.1) * (新值-旧值)
+        kalman_adc[0] = Old_Input[0] + H * (ADC_Value[0] - Old_Input[0])
+        kalman_adc[1] = Old_Input[1] + H * (ADC_Value[1] - Old_Input[1])
+        # 计算新的累计误差
+        Accumulated_Error = ((1 - H)*Old_Error_All**2)**(1/2)
+        # 新值变为旧值
+        kalman_adc_old = kalman_adc
+        return kalman_adc
     
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
@@ -233,8 +205,7 @@ def run(
                     c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
                     print("bozhang center_point", center_point, gn, xyxy)
-                    x, P = kalman_xy(x, P, center_point, R)
-                    center_point_final = [round(x.item((0,0))), round(x.item((1,0)))]
+                    center_point_final = kalman(center_point)
                     xyxy[0] = center_point_final[0]-6
                     xyxy[1] = center_point_final[1]-6
                     xyxy[2] = center_point_final[0]+6
@@ -258,8 +229,7 @@ def run(
                     break
             else:
                 print("bozhang center_point", center_point_final, gn, xyxy)
-                x, P = kalman_xy(x, P, center_point_final, R)
-                center_point_final = [round(x.item((0,0))), round(x.item((1,0)))]
+                center_point_final = kalman(center_point)
                 xyxy = []
                 xyxy.append( center_point_final[0]-6 )
                 xyxy.append( center_point_final[1]-6 )
