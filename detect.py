@@ -84,7 +84,7 @@ def run(
     # Q为这一轮的心里的预估误差
     Q = 0.00001
     # R为下一轮的测量误差
-    R = 0.0001
+    R = 0.01
     # Accumulated_Error为上一轮的估计误差，具体呈现为所有误差的累计
     global Accumulated_Error
     Accumulated_Error = 1
@@ -211,8 +211,8 @@ def run(
                     print("bozhang center_point", center_point, gn, xyxy)
                     if center_point_final[0] == 0 and  center_point_final[1] == 0:
                         center_point_final = kalman(center_point)
-                    #elif abs(center_point[0] - center_point_final[0]) > 300 or abs(center_point[1] - center_point_final[1]) > 300:
-                    #    center_point_final = kalman(center_point_final)
+                    elif abs(center_point[0] - center_point_final[0]) > 300 or abs(center_point[1] - center_point_final[1]) > 300:
+                        center_point_final = kalman(center_point_final)
                     else:
                         center_point_final = kalman(center_point)
                     center_point_final[0] = round(center_point_final[0])
