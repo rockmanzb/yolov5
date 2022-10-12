@@ -188,7 +188,7 @@ def run(
                         x = center_point
                         start = 0
                     else:
-                        if (abs(center_point[0] - center_point_final[0]) > 112 or abs(center_point[1] - center_point_final[1]) > 112):
+                        if (abs(center_point[0] - center_point_final[0]) > 80 or abs(center_point[1] - center_point_final[1]) > 80):
                             if frame_cnt < 3:
                                 mes = np.reshape(pos[0,:],(2,1))
                                 x = kalman.correct(mes)
