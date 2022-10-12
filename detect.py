@@ -182,7 +182,7 @@ def run(
                     center_point = [[round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)]]
                     print("bozhang center_point", center_point, gn, xyxy)
                     if start:
-                        kalman.statePre =  np.array([[center_point[0]],[center_point[1]]],np.float32)
+                        kalman.statePre =  np.array([[center_point[0][0]],[center_point[0][1]]],np.float32)
                         mes = np.reshape(center_point[0,:],(2,1))
                         x = center_point
                         #x = kalman.correct(mes)
