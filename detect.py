@@ -140,6 +140,7 @@ def run(
     x = np.matrix('0. 0. 0. 0.').T 
     P = np.matrix(np.eye(4))*1000 # initial uncertainty
     R = 0.01**2
+    central_point_final = [0, 0]
     
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
@@ -255,7 +256,27 @@ def run(
                     if save_crop:
                         save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
                     break
-                    
+            else:
+                print("bozhang center_point", center_point_final, gn, xyxy)
+                x, P = kalman_xy(x, P, center_point_final, R)
+                center_point_final = [round(x.item((0,0))), round(x.item((1,0)))]
+                xyxy = []
+                xyxy.append( center_point_final[0]-6 )
+                xyxy.append( center_point_final[1]-6 )
+                xyxy.append( center_point_final[0]+6 )
+                xyxy.append( center_point_final[1]+6 )
+                if save_txt:  # Write to file
+                    xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+                    #line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
+                    #with open(f'{txt_path}.txt', 'a') as f:
+                        #f.write(('%g ' * len(line)).rstrip() % line + '\n')
+
+                if save_img or save_crop or view_img:  # Add bbox to image
+                    c = int(cls)  # integer class
+                    label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f} {center_point_final}')
+                    annotator.box_label(xyxy, label, color=colors(c, True))
+                if save_crop:
+                    save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
             # Stream results
             im0 = annotator.result()
             if view_img:
