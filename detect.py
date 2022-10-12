@@ -88,7 +88,7 @@ def run(
     kalman.measurementNoiseCov = np.array([[1,0],[0,1]], np.float32) * 0.01
     start = 1
     frame_cnt = 0
-    center_point_final = [0, 0]
+    center_point_final = [960, 540]
     pos = np.array([center_point_final], np.float32)
     
     source = str(source)
@@ -251,11 +251,11 @@ def run(
                         #f.write(('%g ' * len(line)).rstrip() % line + '\n')
 
                 if save_img or save_crop or view_img:  # Add bbox to image
-                    c = int(cls)  # integer class
-                    label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f} {center_point_final}')
+                    #c = int(cls)  # integer class
+                    label = None if hide_labels else ("ball" if hide_conf else f'"ball" {conf:.2f} {center_point_final}')
                     annotator.box_label(xyxy, label, color=colors(c, True))
                 if save_crop:
-                    save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
+                    save_one_box(xyxy, imc, file=save_dir / 'crops' / "ball" / f'{p.stem}.jpg', BGR=True)
             # Stream results
             im0 = annotator.result()
             if view_img:
