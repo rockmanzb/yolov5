@@ -80,7 +80,7 @@ def run(
         half=False,  # use FP16 half-precision inference
         dnn=False,  # use OpenCV DNN for ONNX inference
 ):
-    center_point_final = [0, 0]
+    center_point_final = meas = [0, 0]
     # Q为这一轮的心里的预估误差
     Q = 0.00001
     # R为下一轮的测量误差
@@ -212,16 +212,18 @@ def run(
                     print("bozhang center_point", center_point, gn, xyxy)
                     if center_point_final[0] == 0 and  center_point_final[1] == 0:
                         center_point_final = kalman(center_point)
+                        meas = center_point
                         frame_cnt = 0
                     elif (abs(center_point[0] - center_point_final[0]) > 150 or abs(center_point[1] - center_point_final[1]) > 150):
                         if frame_cnt < 3:
-                            center_point_final = kalman(center_point_final)
+                            center_point_final = kalman(meas)
                             frame_cnt += 1
                         else:
                             center_point_final = kalman(center_point)
                             frame_cnt = 0
                     else:
                         center_point_final = kalman(center_point)
+                        meas = center_point
                         frame_cnt = 0
                     center_point_final[0] = round(center_point_final[0])
                     center_point_final[1] = round(center_point_final[1])
@@ -248,7 +250,7 @@ def run(
                     break
             else:
                 print("bozhang center_point", center_point_final, gn, xyxy)
-                center_point_final = kalman(center_point_final)
+                center_point_final = kalman(center_point)
                 center_point_final[0] = round(center_point_final[0])
                 center_point_final[1] = round(center_point_final[1])
                 xyxy = []
