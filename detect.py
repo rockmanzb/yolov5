@@ -253,7 +253,11 @@ def run(
                         ball_pos = 0
                     R = 0.01**2
                     x, P = kalman_xy(x, P, center_point, R)
-                    center_point_final[i] = [x[0][0], x[1][0]]
+                    center_point_final = [x[0][0], x[1][0]]
+                    xyxy[0] = center_point_final[0]-5
+                    xyxy[1] = center_point_final[0]+5
+                    xyxy[2] = center_point_final[1]-5
+                    xyxy[3] = center_point_final[1]+5
                      
                     print ("bozhang final center_point", center_point, gn)    
                     center_point_normalized = center_point[0]/gn[0], center_point[1]/gn[1]
