@@ -86,8 +86,6 @@ def run(
     kalman.transitionMatrix = np.array([[1,0],[0,1]], np.float32)
     kalman.processNoiseCov = np.array([[1,0],[0,1]], np.float32) * 1e-3
     kalman.measurementNoiseCov = np.array([[1,0],[0,1]], np.float32) * 0.01
-    start = 1
-    center_point_final = [0, 0]
     
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
@@ -182,16 +180,12 @@ def run(
                     pos = np.array([center_point], np.float32)
                     print ("bozhang center_point", pos, gn, xyxy)
                     if start==1:
-                        kalman.statePre = np.array([[center_point[0]],[center_point[1]]], np.float32)
+                        alman.statePre =  np.array([[1360],[344]],np.float32)
                         x = center_point
-                        #x = kalman.correct(mes)
-                        #y = kalman.predict()  
                         start = 0
-                        print ("bozhang kalman debug start", x, gn)
                     else:
                         mes = np.reshape(pos[0,:],(2,1))
                         x = kalman.correct(mes)
-                        print ("bozhang kalman debug", x, gn, mes)    
                     center_point_final[0] = int(x[0])
                     center_point_final[1] = int(x[1])
                     xyxy[0] = center_point_final[0]-6
