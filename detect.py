@@ -137,7 +137,10 @@ def run(
         half=False,  # use FP16 half-precision inference
         dnn=False,  # use OpenCV DNN for ONNX inference
 ):
-    ball_pos = 100
+    x = np.matrix('0. 0. 0. 0.').T 
+    P = np.matrix(np.eye(4))*1000 # initial uncertainty
+    R = 0.01**2
+    
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
     is_file = Path(source).suffix[1:] in (IMG_FORMATS + VID_FORMATS)
@@ -228,14 +231,9 @@ def run(
                 for *xyxy, conf, cls in det:
                     c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
-                    print("bozhang center_point", center_point, gn, xyxy)
-                    if ball_pos == 100:
-                        x = np.matrix('0. 0. 0. 0.').T 
-                        P = np.matrix(np.eye(4))*1000 # initial uncertainty
-                        ball_pos = 0
-                    R = 0.01**2
+                    print("bozhang center_point", center_point, gn, xyxy, P, R)
                     x, P = kalman_xy(x, P, center_point, R)
-                    center_point_final = [x.item((0,0)), x.item(1,0)]
+                    center_point_final = [around(x.item((0,0))), around(x.item(1,0))]
                     xyxy[0] = center_point_final[0]-6
                     xyxy[1] = center_point_final[1]-6
                     xyxy[2] = center_point_final[0]+6
