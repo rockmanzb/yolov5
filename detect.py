@@ -89,6 +89,7 @@ def run(
     start = 1
     frame_cnt = 0
     center_point_final = [0, 0]
+    pos = np.array([center_point_final], np.float32)
     
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
