@@ -91,7 +91,7 @@ def run(
     # 初始旧值
     global kalman_adc_old
     kalman_adc_old = [0,0]
-    SCOPE = 200
+    SCOPE = 50
     
     def kalman(ADC_Value):
         global kalman_adc_old
@@ -100,8 +100,8 @@ def run(
         Old_Input = [0, 0]
         kalman_adc = [0,0]
         if ( abs(ADC_Value[0]-kalman_adc_old[0])/SCOPE + abs(ADC_Value[1]-kalman_adc_old[1])/SCOPE ) > 0.25:
-            Old_Input[0] = ADC_Value[0]*0.2 + kalman_adc_old[0]*0.8
-            Old_Input[1] = ADC_Value[1]*0.2 + kalman_adc_old[1]*0.8
+            Old_Input[0] = ADC_Value[0]*0.1 + kalman_adc_old[0]*0.9
+            Old_Input[1] = ADC_Value[1]*0.1 + kalman_adc_old[1]*0.9
         else:
             Old_Input = kalman_adc_old
         # 上一轮的 总误差=累计误差^2+预估误差^2
