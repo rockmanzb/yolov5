@@ -180,7 +180,7 @@ def run(
                 for *xyxy, conf, cls in det:
                     c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
-                    pos = np.array(center_point, np.float32)
+                    pos = np.array([center_point], np.float32)
                     print("bozhang center_point", center_point, gn, xyxy)
                     if start:
                         kalman.statePre =  pos
