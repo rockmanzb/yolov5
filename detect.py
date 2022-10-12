@@ -188,9 +188,11 @@ def run(
                         #x = kalman.correct(mes)
                         #y = kalman.predict()  
                         start = 0
+                        print ("bozhang kalman debug start", x, gn)
                     else:
                         mes = np.reshape(pos[0,:],(2,1))
                         x = kalman.correct(mes)
+                        print ("bozhang kalman debug", x, gn)    
                     center_point_final[0] = int(x[0])
                     center_point_final[1] = int(x[1])
                     xyxy[0] = center_point_final[0]-6
