@@ -188,7 +188,7 @@ def run(
                         #y = kalman.predict()                                                               
                     else:
                         mes = np.reshape(center_point,(2,1))
-                        center_point_final = kalman.correct(mes)
+                        center_point_final = list(kalman.correct(mes))
                     center_point_final[0] = round(center_point_final[0])
                     center_point_final[1] = round(center_point_final[1])
                     xyxy[0] = center_point_final[0]-6
