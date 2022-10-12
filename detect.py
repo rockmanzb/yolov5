@@ -230,7 +230,7 @@ def run(
                         save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
                     break
             else:
-                print("bozhang center_point", center_point_final, gn, xyxy)
+                print("bozhang center_point", center_point_final, gn)
                 mes = np.reshape(pos[0,:],(2,1))
                 x = kalman.correct(mes)
                 y = kalman.predict()
