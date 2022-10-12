@@ -204,6 +204,8 @@ def run(
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
                     print("bozhang center_point", center_point, gn, xyxy)
                     center_point_final = kalman(center_point, Accumulated_Error, kalman_adc_old)
+                    center_point_final[0] = round(center_point_final[0])
+                    center_point_final[1] = round(center_point_final[1])
                     xyxy[0] = center_point_final[0]-6
                     xyxy[1] = center_point_final[1]-6
                     xyxy[2] = center_point_final[0]+6
@@ -228,6 +230,8 @@ def run(
             else:
                 print("bozhang center_point", center_point_final, gn, xyxy)
                 center_point_final = kalman(center_point, Accumulated_Error, kalman_adc_old)
+                center_point_final[0] = round(center_point_final[0])
+                center_point_final[1] = round(center_point_final[1])
                 xyxy = []
                 xyxy.append( center_point_final[0]-6 )
                 xyxy.append( center_point_final[1]-6 )
