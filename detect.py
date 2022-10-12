@@ -86,30 +86,6 @@ def run(
     kalman.transitionMatrix = np.array([[1,0],[0,1]], np.float32)
     kalman.processNoiseCov = np.array([[1,0],[0,1]], np.float32) * 1e-3
     kalman.measurementNoiseCov = np.array([[1,0],[0,1]], np.float32) * 0.01
-    
-    pos = np.array([
-        [1359,    343.5],
-        [1358,    342],    
-        [1356,    342],     
-        [1343,    340.5],     
-        [1353.5,  340.5],
-        [1153.5,  240.5],
-        [1053.5,  200.5]], np.float32)
-    kalman.statePre =  np.array([[1360],[344]],np.float32)
-    for i in range(len(pos)):
-        mes = np.reshape(pos[i,:],(2,1))
-
-        x = kalman.correct(mes)
-
-        y = kalman.predict()
-        print (kalman.statePost[0],kalman.statePost[1])
-        print (kalman.statePre[0],kalman.statePre[1])
-        print ('measurement:\t',mes[0],mes[1])  
-        print ('correct:\t',x[0],x[1])
-        print ('predict:\t',y[0],y[1])     
-        print ('='*30)
-    
-    
     start = 1
     center_point_final = [0, 0]
     
@@ -212,6 +188,7 @@ def run(
                     else:
                         mes = np.reshape(pos[0,:],(2,1))
                         x = kalman.correct(mes)
+                        y = kalman.predict()
                     center_point_final[0] = int(x[0])
                     center_point_final[1] = int(x[1])
                     xyxy[0] = center_point_final[0]-6
@@ -239,6 +216,7 @@ def run(
                 print("bozhang center_point", center_point_final, gn, xyxy)
                 mes = np.reshape(pos[0,:],(2,1))
                 x = kalman.correct(mes)
+                y = kalman.predict()
                 center_point_final[0] = int(x[0])
                 center_point_final[1] = int(x[1])
                 xyxy = []
