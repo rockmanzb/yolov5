@@ -87,6 +87,7 @@ def run(
     kalman.processNoiseCov = np.array([[1,0],[0,1]], np.float32) * 1e-3
     kalman.measurementNoiseCov = np.array([[1,0],[0,1]], np.float32) * 0.01
     start = 1
+    frame_cnt = 0
     center_point_final = [0, 0]
     
     source = str(source)
@@ -187,14 +188,22 @@ def run(
                         start = 0
                     else:
                         if (abs(center_point[0] - center_point_final[0]) > 224 or abs(center_point[1] - center_point_final[1]) > 224):
-                            pos = np.array([center_point_final], np.float32)
-                            mes = np.reshape(pos[0,:],(2,1))
-                            x = kalman.correct(mes)
-                            y = kalman.predict()
+                            if frame_cnt < 3:
+                                pos = np.array([center_point_final], np.float32)
+                                mes = np.reshape(pos[0,:],(2,1))
+                                x = kalman.correct(mes)
+                                y = kalman.predict()
+                                frame_cnt += 1
+                            else:
+                                mes = np.reshape(pos[0,:],(2,1))
+                                x = kalman.correct(mes)
+                                y = kalman.predict()
+                                frame_cnt = 0
                         else:
                             mes = np.reshape(pos[0,:],(2,1))
                             x = kalman.correct(mes)
                             y = kalman.predict()
+                            frame_cnt = 0
                     center_point_final[0] = int(x[0])
                     center_point_final[1] = int(x[1])
                     xyxy[0] = center_point_final[0]-6
@@ -223,6 +232,7 @@ def run(
                 mes = np.reshape(pos[0,:],(2,1))
                 x = kalman.correct(mes)
                 y = kalman.predict()
+                frame_cnt = 0
                 center_point_final[0] = int(x[0])
                 center_point_final[1] = int(x[1])
                 xyxy = []
