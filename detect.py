@@ -193,8 +193,8 @@ def run(
                         mes = np.reshape(pos[0],(2,1))
                         print (mes)
                         x = kalman.correct(mes)
-                    center_point_final[0] = round(x[0])
-                    center_point_final[1] = round(x[1])
+                    center_point_final[0] = int(x[0])
+                    center_point_final[1] = int(x[1])
                     xyxy[0] = center_point_final[0]-6
                     xyxy[1] = center_point_final[1]-6
                     xyxy[2] = center_point_final[0]+6
@@ -220,8 +220,8 @@ def run(
                 print("bozhang center_point", center_point_final, gn, xyxy)
                 mes = np.reshape(pos[0],(2,1))
                 x = kalman.correct(mes)
-                center_point_final[0] = round(x[0])
-                center_point_final[1] = round(x[1])
+                center_point_final[0] = int(x[0])
+                center_point_final[1] = int(x[1])
                 xyxy = []
                 xyxy.append( center_point_final[0]-6 )
                 xyxy.append( center_point_final[1]-6 )
