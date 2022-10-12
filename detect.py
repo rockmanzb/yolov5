@@ -215,7 +215,7 @@ def run(
                     break
             else:
                 print("bozhang center_point", center_point_final, gn, xyxy)
-                x = kalman.correct(mes)
+                x = kalman.correct(center_point_final)
                 center_point_final[0] = round(x[0])
                 center_point_final[1] = round(x[1])
                 xyxy = []
