@@ -99,11 +99,11 @@ def run(
         # 新的值相比旧的值差太大时进行跟踪
         Old_Input = [0, 0]
         kalman_adc = [0,0]
-        if ( abs(ADC_Value[0]-kalman_adc_old[0])/SCOPE + abs(ADC_Value[1]-kalman_adc_old[1])/SCOPE ) > 0.25:
-            Old_Input[0] = ADC_Value[0]*0.1 + kalman_adc_old[0]*0.9
-            Old_Input[1] = ADC_Value[1]*0.1 + kalman_adc_old[1]*0.9
-        else:
-            Old_Input = kalman_adc_old
+        #if ( abs(ADC_Value[0]-kalman_adc_old[0])/SCOPE + abs(ADC_Value[1]-kalman_adc_old[1])/SCOPE ) > 0.25:
+        #    Old_Input[0] = ADC_Value[0]*0.2 + kalman_adc_old[0]*0.8
+        #    Old_Input[1] = ADC_Value[1]*0.2 + kalman_adc_old[1]*0.8
+        #else:
+        Old_Input = kalman_adc_old
         # 上一轮的 总误差=累计误差^2+预估误差^2
         Old_Error_All = (Accumulated_Error**2 + Q**2)**(1/2)
         # R为这一轮的预估误差
