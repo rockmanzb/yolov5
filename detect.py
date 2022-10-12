@@ -181,7 +181,7 @@ def run(
                     c1, c2 = (xyxy[0], xyxy[1]), (xyxy[2], xyxy[3])
                     center_point = (int(c1[0])+int(c2[0]))/2.0, (int(c1[1])+int(c2[1]))/2.0
                     pos = np.array([center_point], np.float32)
-                    print ("bozhang center_point", center_point, gn, xyxy)
+                    print ("bozhang center_point", pos, gn, xyxy)
                     if start==1:
                         kalman.statePre = np.array([ [center_point[0]],[center_point[1]] ],np.float32)
                         x = center_point
