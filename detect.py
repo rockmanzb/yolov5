@@ -84,24 +84,24 @@ def run(
     # Q为这一轮的心里的预估误差
     Q = 0.00001
     # R为下一轮的测量误差
-    R = 0.1
+    R = 0.0001
     # Accumulated_Error为上一轮的估计误差，具体呈现为所有误差的累计
     global Accumulated_Error
     Accumulated_Error = 1
     # 初始旧值
     global kalman_adc_old
     kalman_adc_old = [0,0]
-    SCOPE = 200
+    SCOPE = 50
     
     def kalman(ADC_Value):
         global kalman_adc_old
         global Accumulated_Error
         # 新的值相比旧的值差太大时进行跟踪
-        Old_Input = [0, 0]
+        Old_Input = [0,0]
         kalman_adc = [0,0]
-        if ( abs(ADC_Value[0]-kalman_adc_old[0])/SCOPE + abs(ADC_Value[1]-kalman_adc_old[1])/SCOPE ) > 1:
-            Old_Input[0] = ADC_Value[0]*0.2 + kalman_adc_old[0]*0.8
-            Old_Input[1] = ADC_Value[1]*0.2 + kalman_adc_old[1]*0.8
+        if ( abs(ADC_Value[0]-kalman_adc_old[0])/SCOPE + abs(ADC_Value[1]-kalman_adc_old[1])/SCOPE ) > 0.25:
+            Old_Input[0] = ADC_Value[0]*0.382 + kalman_adc_old[0]*0.618
+            Old_Input[1] = ADC_Value[1]*0.382 + kalman_adc_old[1]*0.618
         else:
             Old_Input = kalman_adc_old
         # 上一轮的 总误差=累计误差^2+预估误差^2
