@@ -180,26 +180,28 @@ def run(
                 for *xyxy, conf, cls in det:
                     c1, c2 = (xyxy[0], xyxy[1]), (xyxy[2], xyxy[3])
                     center_point = (int(c1[0])+int(c2[0]))/2.0, (int(c1[1])+int(c2[1]))/2.0
-                    pos = np.array([center_point], np.float32)
+                    
                     print ("bozhang center_point", pos, gn, xyxy)
                     if start==1:
+                        pos = np.array([center_point], np.float32)
                         kalman.statePre =  np.array([[1360],[344]],np.float32)
                         x = center_point
                         start = 0
                     else:
                         if (abs(center_point[0] - center_point_final[0]) > 224 or abs(center_point[1] - center_point_final[1]) > 224):
                             if frame_cnt < 3:
-                                pos = np.array([center_point_final], np.float32)
                                 mes = np.reshape(pos[0,:],(2,1))
                                 x = kalman.correct(mes)
                                 y = kalman.predict()
                                 frame_cnt += 1
                             else:
+                                pos = np.array([center_point], np.float32)
                                 mes = np.reshape(pos[0,:],(2,1))
                                 x = kalman.correct(mes)
                                 y = kalman.predict()
                                 frame_cnt = 0
                         else:
+                            pos = np.array([center_point], np.float32)
                             mes = np.reshape(pos[0,:],(2,1))
                             x = kalman.correct(mes)
                             y = kalman.predict()
