@@ -90,7 +90,7 @@ def run(
     # 初始旧值
     global kalman_adc_old
     kalman_adc_old = [0,0]
-    SCOPE = 100
+    SCOPE = 150
     
     def kalman(ADC_Value):
         global kalman_adc_old
@@ -210,8 +210,8 @@ def run(
                     print("bozhang center_point", center_point, gn, xyxy)
                     if center_point_final[0] == 0 and  center_point_final[1] == 0:
                         center_point_final = kalman(center_point)
-                    elif abs(center_point[0] - center_point_final[0]) > 300 or abs(center_point[1] - center_point_final[1]) > 300:
-                        center_point_final = kalman(center_point_final)
+                    #elif abs(center_point[0] - center_point_final[0]) > 300 or abs(center_point[1] - center_point_final[1]) > 300:
+                    #    center_point_final = kalman(center_point_final)
                     else:
                         center_point_final = kalman(center_point)
                     center_point_final[0] = round(center_point_final[0])
