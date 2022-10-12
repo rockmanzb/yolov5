@@ -191,6 +191,7 @@ def run(
                         start = 0
                     else:
                         mes = np.reshape(pos[0],(2,1))
+                        print (mes)
                         x = kalman.correct(mes)
                     center_point_final[0] = round(x[0])
                     center_point_final[1] = round(x[1])
