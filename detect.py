@@ -231,7 +231,7 @@ def run(
                 for *xyxy, conf, cls in det:
                     c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
-                    print("bozhang center_point", center_point, gn, xyxy, P, R)
+                    print("bozhang center_point", center_point, gn, xyxy)
                     x, P = kalman_xy(x, P, center_point, R)
                     center_point_final = [round(x.item((0,0))), round(x.item((1,0)))]
                     xyxy[0] = center_point_final[0]-6
