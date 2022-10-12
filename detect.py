@@ -182,7 +182,7 @@ def run(
                     pos = np.array([center_point], np.float32)
                     print ("bozhang center_point", pos, gn, xyxy)
                     if start==1:
-                        alman.statePre =  np.array([[1360],[344]],np.float32)
+                        kalman.statePre =  np.array([[1360],[344]],np.float32)
                         x = center_point
                         start = 0
                     else:
