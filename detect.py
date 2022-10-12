@@ -86,6 +86,8 @@ def run(
     kalman.transitionMatrix = np.array([[1,0],[0,1]], np.float32)
     kalman.processNoiseCov = np.array([[1,0],[0,1]], np.float32) * 1e-3
     kalman.measurementNoiseCov = np.array([[1,0],[0,1]], np.float32) * 0.01
+    start = 1
+    center_point_final = [0, 0]
     
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
