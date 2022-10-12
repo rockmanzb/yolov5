@@ -93,8 +93,8 @@ def run(
     SCOPE = 50
     
     def kalman(ADC_Value):
-        #global kalman_adc_old
-        #global Accumulated_Error
+        global kalman_adc_old
+        global Accumulated_Error
         # 新的值相比旧的值差太大时进行跟踪
         Old_Input = [0, 0]
         kalman_adc = [0,0]
