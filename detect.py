@@ -215,12 +215,12 @@ def run(
                         meas = center_point
                         frame_cnt = 0
                     elif (abs(center_point[0] - center_point_final[0]) > 150 or abs(center_point[1] - center_point_final[1]) > 150):
-                        if frame_cnt < 3:
-                            center_point_final = kalman(meas)
-                            frame_cnt += 1
-                        else:
-                            center_point_final = kalman(center_point)
-                            frame_cnt = 0
+                        #if frame_cnt < 3:
+                        center_point_final = kalman(meas)
+                        #frame_cnt += 1
+                        #else:
+                        #    center_point_final = kalman(center_point)
+                        #    frame_cnt = 0
                     else:
                         center_point_final = kalman(center_point)
                         meas = center_point
