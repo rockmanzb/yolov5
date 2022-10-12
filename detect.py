@@ -50,30 +50,7 @@ from utils.general import (LOGGER, check_file, check_img_size, check_imshow, che
 from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import select_device, time_sync
 
-def kalman(ADC_Value):
-    global kalman_adc_old
-    global Accumulated_Error
-    # 新的值相比旧的值差太大时进行跟踪
-    Old_Input = [0, 0]
-    kalman_adc = [0,0]
-    if ( abs(ADC_Value[0]-kalman_adc_old[0])/SCOPE + abs(ADC_Value[1]-kalman_adc_old[1])/SCOPE ) > 0.25:
-        Old_Input[0] = ADC_Value[0]*0.382 + kalman_adc_old[0]*0.618
-        Old_Input[1] = ADC_Value[1]*0.382 + kalman_adc_old[1]*0.618
-    else:
-        Old_Input = kalman_adc_old
-    # 上一轮的 总误差=累计误差^2+预估误差^2
-    Old_Error_All = (Accumulated_Error**2 + Q**2)**(1/2)
-    # R为这一轮的预估误差
-    # H为利用均方差计算出来的双方的相信度
-    H = Old_Error_All**2/(Old_Error_All**2 + R**2)
-    # 旧值 + 1.00001/(1.00001+0.1) * (新值-旧值)
-    kalman_adc[0] = Old_Input[0] + H * (ADC_Value[0] - Old_Input[0])
-    kalman_adc[1] = Old_Input[1] + H * (ADC_Value[1] - Old_Input[1])
-    # 计算新的累计误差
-    Accumulated_Error = ((1 - H)*Old_Error_All**2)**(1/2)
-    # 新值变为旧值
-    kalman_adc_old = kalman_adc
-    return kalman_adc
+
 @torch.no_grad()
 def run(
         weights=ROOT / 'weights/yolov5s.pt',  # model path(s)
@@ -108,11 +85,35 @@ def run(
     # R为下一轮的测量误差
     R = 0.1
     # Accumulated_Error为上一轮的估计误差，具体呈现为所有误差的累计
-    Accumulated_Error = 1
+    global Accumulated_Error = 1
     # 初始旧值
-    kalman_adc_old = [0,0]
+    global kalman_adc_old = [0,0]
     SCOPE = 50
     
+    def kalman(ADC_Value):
+        #global kalman_adc_old
+        #global Accumulated_Error
+        # 新的值相比旧的值差太大时进行跟踪
+        Old_Input = [0, 0]
+        kalman_adc = [0,0]
+        if ( abs(ADC_Value[0]-kalman_adc_old[0])/SCOPE + abs(ADC_Value[1]-kalman_adc_old[1])/SCOPE ) > 0.25:
+            Old_Input[0] = ADC_Value[0]*0.382 + kalman_adc_old[0]*0.618
+            Old_Input[1] = ADC_Value[1]*0.382 + kalman_adc_old[1]*0.618
+        else:
+            Old_Input = kalman_adc_old
+        # 上一轮的 总误差=累计误差^2+预估误差^2
+        Old_Error_All = (Accumulated_Error**2 + Q**2)**(1/2)
+        # R为这一轮的预估误差
+        # H为利用均方差计算出来的双方的相信度
+        H = Old_Error_All**2/(Old_Error_All**2 + R**2)
+        # 旧值 + 1.00001/(1.00001+0.1) * (新值-旧值)
+        kalman_adc[0] = Old_Input[0] + H * (ADC_Value[0] - Old_Input[0])
+        kalman_adc[1] = Old_Input[1] + H * (ADC_Value[1] - Old_Input[1])
+        # 计算新的累计误差
+        Accumulated_Error = ((1 - H)*Old_Error_All**2)**(1/2)
+        # 新值变为旧值
+        kalman_adc_old = kalman_adc
+        return kalman_adc
     
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
