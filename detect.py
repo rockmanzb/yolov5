@@ -183,12 +183,12 @@ def run(
                     if start:
                         kalman.statePre =  np.array([[center_point[0]],[center_point[1]]],np.float32)
                         mes = np.reshape(center_point,(2,1))
-                        center_point_final = center_point
+                        x = center_point
                         #x = kalman.correct(mes)
                         #y = kalman.predict()                                                               
                     else:
                         mes = np.reshape(center_point,(2,1))
-                        x = list(kalman.correct(mes))
+                        x = kalman.correct(mes)
                     center_point_final[0] = round(x[0])
                     center_point_final[1] = round(x[1])
                     xyxy[0] = center_point_final[0]-6
@@ -214,9 +214,9 @@ def run(
                     break
             else:
                 print("bozhang center_point", center_point_final, gn, xyxy)
-                center_point_final = kalman.correct(mes)
-                center_point_final[0] = round(center_point_final[0])
-                center_point_final[1] = round(center_point_final[1])
+                x = kalman.correct(mes)
+                center_point_final[0] = round(x[0])
+                center_point_final[1] = round(x[1])
                 xyxy = []
                 xyxy.append( center_point_final[0]-6 )
                 xyxy.append( center_point_final[1]-6 )
