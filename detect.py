@@ -210,7 +210,7 @@ def run(
                     print("bozhang center_point", center_point, gn, xyxy)
                     if center_point_final[0] == 0 and  center_point_final[1] == 0:
                         center_point_final = kalman(center_point)
-                    elif abs(center_point[0] - center_point_final[0]) > 100 or abs(center_point[1] - center_point_final[1]) > 100:
+                    elif abs(center_point[0] - center_point_final[0]) > 300 or abs(center_point[1] - center_point_final[1]) > 300:
                         center_point_final = kalman(center_point_final)
                     else:
                         center_point_final = kalman(center_point)
