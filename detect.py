@@ -92,6 +92,7 @@ def run(
     global kalman_adc_old
     kalman_adc_old = [0,0]
     SCOPE = 50
+    frame_cnt = 0
     
     def kalman(ADC_Value):
         global kalman_adc_old
@@ -211,10 +212,17 @@ def run(
                     print("bozhang center_point", center_point, gn, xyxy)
                     if center_point_final[0] == 0 and  center_point_final[1] == 0:
                         center_point_final = kalman(center_point)
-                    elif abs(center_point[0] - center_point_final[0]) > 300 or abs(center_point[1] - center_point_final[1]) > 300:
-                        center_point_final = kalman(center_point_final)
+                        frame_cnt = 0
+                    elif (abs(center_point[0] - center_point_final[0]) > 300 or abs(center_point[1] - center_point_final[1]) > 300):
+                        if frame_cnt < 3:
+                            center_point_final = kalman(center_point_final)
+                            frame_cnt += 1
+                        else:
+                            center_point_final = kalman(center_point)
+                            frame_cnt = 0
                     else:
                         center_point_final = kalman(center_point)
+                        frame_cnt = 0
                     center_point_final[0] = round(center_point_final[0])
                     center_point_final[1] = round(center_point_final[1])
                     xyxy[0] = center_point_final[0]-6
