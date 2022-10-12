@@ -180,16 +180,15 @@ def run(
                 for *xyxy, conf, cls in det:
                     c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
+                    pos = np.array(center_point, np.float32)
                     print("bozhang center_point", center_point, gn, xyxy)
                     if start:
-                        kalman.statePre =  np.array([[center_point[0]],[center_point[1]]],np.float32)
-                        mes = np.reshape([center_point][0,:],(2,1))
-                        x = center_point
+                        kalman.statePre =  pos
                         #x = kalman.correct(mes)
                         #y = kalman.predict()  
                         start = 0
                     else:
-                        mes = np.reshape([center_point][0,:],(2,1))
+                        mes = np.reshape(pos[0,:],(2,1))
                         x = kalman.correct(mes)
                     center_point_final[0] = round(x[0])
                     center_point_final[1] = round(x[1])
@@ -216,7 +215,7 @@ def run(
                     break
             else:
                 print("bozhang center_point", center_point_final, gn, xyxy)
-                mes = np.reshape([center_point_final][0,:],(2,1))
+                mes = np.reshape(pos[0,:],(2,1))
                 x = kalman.correct(mes)
                 center_point_final[0] = round(x[0])
                 center_point_final[1] = round(x[1])
