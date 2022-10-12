@@ -96,7 +96,6 @@ def run(
         [1153.5,  240.5],
         [1053.5,  200.5]], np.float32)
     kalman.statePre =  np.array([[1360],[344]],np.float32)
-    pos = np.array(pos1, np.float32)
     for i in range(len(pos)):
         mes = np.reshape(pos[i,:],(2,1))
 
