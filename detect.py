@@ -32,6 +32,67 @@ from pathlib import Path
 import torch
 import torch.backends.cudnn as cudnn
 
+import numpy as np
+import matplotlib.pyplot as plt
+
+def kalman_xy(x, P, measurement, R,
+              motion = np.matrix('0. 0. 0. 0.').T,
+              Q = np.matrix(np.eye(4))):
+    """
+    Parameters:    
+    x: initial state 4-tuple of location and velocity: (x0, x1, x0_dot, x1_dot)
+    P: initial uncertainty convariance matrix
+    measurement: observed position
+    R: measurement noise 
+    motion: external motion added to state vector x
+    Q: motion noise (same shape as P)
+    """
+    return kalman(x, P, measurement, R, motion, Q,
+                  F = np.matrix('''
+                      1. 0. 1. 0.;
+                      0. 1. 0. 1.;
+                      0. 0. 1. 0.;
+                      0. 0. 0. 1.
+                      '''),
+                  H = np.matrix('''
+                      1. 0. 0. 0.;
+                      0. 1. 0. 0.'''))
+
+def kalman(x, P, measurement, R, motion, Q, F, H):
+    '''
+    Parameters:
+    x: initial state
+    P: initial uncertainty convariance matrix
+    measurement: observed position (same shape as H*x)
+    R: measurement noise (same shape as H)
+    motion: external motion added to state vector x
+    Q: motion noise (same shape as P)
+    F: next state function: x_prime = F*x
+    H: measurement function: position = H*x
+
+    Return: the updated and predicted new values for (x, P)
+
+    See also http://en.wikipedia.org/wiki/Kalman_filter
+
+    This version of kalman can be applied to many different situations by
+    appropriately defining F and H 
+    '''
+    # UPDATE x, P based on measurement m    
+    # distance between measured and current position-belief
+    y = np.matrix(measurement).T - H * x
+    S = H * P * H.T + R  # residual convariance
+    K = P * H.T * S.I    # Kalman gain
+    x = x + K*y
+    I = np.matrix(np.eye(F.shape[0])) # identity matrix
+    P = (I - K*H)*P
+
+    # PREDICT x, P based on motion
+    x = F*x + motion
+    P = F*P*F.T + Q
+
+    return x, P
+
+
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
@@ -168,25 +229,33 @@ def run(
                     c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
                     print("bozhang center_point", center_point, gn, xyxy)
+                    #if ball_pos == 100:
+                    #    pre_center_point = center_point
+                    #    pre_xyxy = list(xyxy)
+                    #    ball_pos = 0
+                    #if ball_pos < 10:
+                    #    if abs(center_point[0] - pre_center_point[0]) > 60 or abs(center_point[1] - pre_center_point[1]) > 60:
+                    #        center_point = pre_center_point
+                    #        xyxy = pre_xyxy
+                    #        print ("bozhang debug change ball pos")
+                    #        ball_pos += 1
+                    #    else:
+                    #        ball_pos = 0
+                    #        pre_center_point = center_point 
+                    #        pre_xyxy = list(xyxy)
+                    #else:
+                    #    ball_pos = 0
+                    #    pre_center_point = center_point
+                    #    pre_xyxy = list(xyxy)
                     if ball_pos == 100:
-                        pre_center_point = center_point
-                        pre_xyxy = list(xyxy)
+                        x = np.matrix('0. 0. 0. 0.').T 
+                        P = np.matrix(np.eye(4))*1000 # initial uncertainty
                         ball_pos = 0
-                    if ball_pos < 10:
-                        if abs(center_point[0] - pre_center_point[0]) > 60 or abs(center_point[1] - pre_center_point[1]) > 60:
-                            center_point = pre_center_point
-                            xyxy = pre_xyxy
-                            print ("bozhang debug change ball pos")
-                            ball_pos += 1
-                        else:
-                            ball_pos = 0
-                            pre_center_point = center_point 
-                            pre_xyxy = list(xyxy)
-                    else:
-                        ball_pos = 0
-                        pre_center_point = center_point
-                        pre_xyxy = list(xyxy)
-                    print ("bozhang final center_point", center_point, gn, xyxy, pre_xyxy)    
+                    R = 0.01**2
+                    x, P = kalman_xy(x, P, center_point, R)
+                    center_point_final[i] = [x[0][0], x[1][0]
+                     
+                    print ("bozhang final center_point", center_point, gn)    
                     center_point_normalized = center_point[0]/gn[0], center_point[1]/gn[1]
                     print("bozhang center_point_normalized", center_point_normalized) 
                     if save_txt:  # Write to file
@@ -197,7 +266,7 @@ def run(
 
                     if save_img or save_crop or view_img:  # Add bbox to image
                         c = int(cls)  # integer class
-                        label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f} {center_point}')
+                        label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f} {center_point_final}')
                         annotator.box_label(xyxy, label, color=colors(c, True))
                     if save_crop:
                         save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
