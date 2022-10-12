@@ -183,6 +183,7 @@ def run(
                     if start:
                         kalman.statePre =  np.array([[center_point[0]],[center_point[1]]],np.float32)
                         mes = np.reshape(center_point,(2,1))
+                        center_point_final = center_point
                         #x = kalman.correct(mes)
                         #y = kalman.predict()                                                               
                     else:
