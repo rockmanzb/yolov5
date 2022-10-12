@@ -186,7 +186,7 @@ def run(
                         x = center_point
                         start = 0
                     else:
-                        if (abs(center_point[0] - center_point_final[0]) > 150 or abs(center_point[1] - center_point_final[1]) > 150):
+                        if (abs(center_point[0] - center_point_final[0]) > 224 or abs(center_point[1] - center_point_final[1]) > 224):
                             pos = np.array([center_point_final], np.float32)
                             mes = np.reshape(pos[0,:],(2,1))
                             x = kalman.correct(mes)
