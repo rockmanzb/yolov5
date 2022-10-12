@@ -178,7 +178,7 @@ def run(
 
                 # Write results
                 for *xyxy, conf, cls in det:
-                    c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
+                    c1, c2 = (xyxy[0], xyxy[1]), (xyxy[2], xyxy[3])
                     center_point = (c1[0]+c2[0])/2.0), (c1[1]+c2[1])/2.0)
                     pos = np.array([center_point], np.float32)
                     print (pos)
