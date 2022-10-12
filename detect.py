@@ -195,20 +195,26 @@ def run(
                                 x = kalman.correct(mes)
                                 y = kalman.predict()
                                 frame_cnt += 1
+                                center_point_final[0] = int(x[0])
+                                center_point_final[1] = int(x[1])
                             else:
                                 pos = np.array([center_point], np.float32)
                                 mes = np.reshape(pos[0,:],(2,1))
                                 x = kalman.correct(mes)
                                 y = kalman.predict()
                                 frame_cnt = 0
+                                center_point_final[0] = center_point[0]
+                                center_point_final[1] = center_point[1]
                         else:
                             pos = np.array([center_point], np.float32)
                             mes = np.reshape(pos[0,:],(2,1))
                             x = kalman.correct(mes)
                             y = kalman.predict()
                             frame_cnt = 0
-                    center_point_final[0] = int(x[0])
-                    center_point_final[1] = int(x[1])
+                            center_point_final[0] = center_point[0]
+                            center_point_final[1] = center_point[1]
+                    #center_point_final[0] = int(x[0])
+                    #center_point_final[1] = int(x[1])
                     xyxy[0] = center_point_final[0]-6
                     xyxy[1] = center_point_final[1]-6
                     xyxy[2] = center_point_final[0]+6
@@ -239,10 +245,10 @@ def run(
                 center_point_final[0] = int(x[0])
                 center_point_final[1] = int(x[1])
                 xyxy = []
-                #xyxy.append( center_point_final[0]-6 )
-                #xyxy.append( center_point_final[1]-6 )
-                #xyxy.append( center_point_final[0]+6 )
-                #xyxy.append( center_point_final[1]+6 )
+                xyxy.append( center_point_final[0]-6 )
+                xyxy.append( center_point_final[1]-6 )
+                xyxy.append( center_point_final[0]+6 )
+                xyxy.append( center_point_final[1]+6 )
                 print ("bozhang final center_point", center_point_final, gn) 
                 if save_txt:  # Write to file
                     xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
