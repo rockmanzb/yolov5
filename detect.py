@@ -213,7 +213,7 @@ def run(
                     if center_point_final[0] == 0 and  center_point_final[1] == 0:
                         center_point_final = kalman(center_point)
                         frame_cnt = 0
-                    elif (abs(center_point[0] - center_point_final[0]) > 300 or abs(center_point[1] - center_point_final[1]) > 300):
+                    elif (abs(center_point[0] - center_point_final[0]) > 150 or abs(center_point[1] - center_point_final[1]) > 150):
                         if frame_cnt < 3:
                             center_point_final = kalman(center_point_final)
                             frame_cnt += 1
