@@ -80,7 +80,7 @@ def run(
         half=False,  # use FP16 half-precision inference
         dnn=False,  # use OpenCV DNN for ONNX inference
 ):
-    central_point_final = [0, 0]
+    center_point_final = [0, 0]
     Q = 0.00001
     # R为下一轮的测量误差
     R = 0.1
