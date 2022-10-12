@@ -265,6 +265,7 @@ def run(
                 xyxy.append( center_point_final[1]-6 )
                 xyxy.append( center_point_final[0]+6 )
                 xyxy.append( center_point_final[1]+6 )
+                print ("bozhang final center_point", center_point_final, gn) 
                 if save_txt:  # Write to file
                     xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
                     #line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
