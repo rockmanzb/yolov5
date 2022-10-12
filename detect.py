@@ -37,6 +37,7 @@ import matplotlib.pyplot as plt
 
 
 
+
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
@@ -80,44 +81,13 @@ def run(
         half=False,  # use FP16 half-precision inference
         dnn=False,  # use OpenCV DNN for ONNX inference
 ):
-    center_point_final = meas = [0, 0]
-    # Q为这一轮的心里的预估误差
-    Q = 0.00001
-    # R为下一轮的测量误差
-    R = 0.01
-    # Accumulated_Error为上一轮的估计误差，具体呈现为所有误差的累计
-    global Accumulated_Error
-    Accumulated_Error = 1
-    # 初始旧值
-    global kalman_adc_old
-    kalman_adc_old = [0,0]
-    SCOPE = 50
-    frame_cnt = 0
-    
-    def kalman(ADC_Value):
-        global kalman_adc_old
-        global Accumulated_Error
-        # 新的值相比旧的值差太大时进行跟踪
-        Old_Input = [0,0]
-        kalman_adc = [0,0]
-        if ( abs(ADC_Value[0]-kalman_adc_old[0])/SCOPE + abs(ADC_Value[1]-kalman_adc_old[1])/SCOPE ) > 0.25:
-            Old_Input[0] = ADC_Value[0]*0.382 + kalman_adc_old[0]*0.618
-            Old_Input[1] = ADC_Value[1]*0.382 + kalman_adc_old[1]*0.618
-        else:
-            Old_Input = kalman_adc_old
-        # 上一轮的 总误差=累计误差^2+预估误差^2
-        Old_Error_All = (Accumulated_Error**2 + Q**2)**(1/2)
-        # R为这一轮的预估误差
-        # H为利用均方差计算出来的双方的相信度
-        H = Old_Error_All**2/(Old_Error_All**2 + R**2)
-        # 旧值 + 1.00001/(1.00001+0.1) * (新值-旧值)
-        kalman_adc[0] = Old_Input[0] + H * (ADC_Value[0] - Old_Input[0])
-        kalman_adc[1] = Old_Input[1] + H * (ADC_Value[1] - Old_Input[1])
-        # 计算新的累计误差
-        Accumulated_Error = ((1 - H)*Old_Error_All**2)**(1/2)
-        # 新值变为旧值
-        kalman_adc_old = kalman_adc
-        return kalman_adc
+    kalman = cv2.KalmanFilter(2,2)
+    kalman.measurementMatrix = np.array([[1,0],[0,1]],np.float32)
+    kalman.transitionMatrix = np.array([[1,0],[0,1]], np.float32)
+    kalman.processNoiseCov = np.array([[1,0],[0,1]], np.float32) * 1e-3
+    kalman.measurementNoiseCov = np.array([[1,0],[0,1]], np.float32) * 0.01
+    kalman.statePre =  np.array([[0],[0]],np.float32)
+    start = 1
     
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
@@ -210,21 +180,14 @@ def run(
                     c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
                     print("bozhang center_point", center_point, gn, xyxy)
-                    if center_point_final[0] == 0 and  center_point_final[1] == 0:
-                        center_point_final = kalman(center_point)
-                        meas = center_point
-                        frame_cnt = 0
-                    elif (abs(center_point[0] - center_point_final[0]) > 150 or abs(center_point[1] - center_point_final[1]) > 150):
-                        #if frame_cnt < 3:
-                        center_point_final = kalman(meas)
-                        #frame_cnt += 1
-                        #else:
-                        #    center_point_final = kalman(center_point)
-                        #    frame_cnt = 0
+                    if start:
+                        kalman.statePre =  np.array([[center_point[0]],[center_point[1]]],np.float32)
+                        mes = np.reshape(center_point,(2,1))
+                        #x = kalman.correct(mes)
+                        #y = kalman.predict()                                                               
                     else:
-                        center_point_final = kalman(center_point)
-                        meas = center_point
-                        frame_cnt = 0
+                        mes = np.reshape(center_point,(2,1))
+                        center_point_final = kalman.correct(mes)
                     center_point_final[0] = round(center_point_final[0])
                     center_point_final[1] = round(center_point_final[1])
                     xyxy[0] = center_point_final[0]-6
@@ -250,7 +213,7 @@ def run(
                     break
             else:
                 print("bozhang center_point", center_point_final, gn, xyxy)
-                center_point_final = kalman(center_point)
+                center_point_final = kalman.correct(mes)
                 center_point_final[0] = round(center_point_final[0])
                 center_point_final[1] = round(center_point_final[1])
                 xyxy = []
