@@ -229,24 +229,6 @@ def run(
                     c1, c2 = (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3]))
                     center_point = round((c1[0]+c2[0])/2), round((c1[1]+c2[1])/2)
                     print("bozhang center_point", center_point, gn, xyxy)
-                    #if ball_pos == 100:
-                    #    pre_center_point = center_point
-                    #    pre_xyxy = list(xyxy)
-                    #    ball_pos = 0
-                    #if ball_pos < 10:
-                    #    if abs(center_point[0] - pre_center_point[0]) > 60 or abs(center_point[1] - pre_center_point[1]) > 60:
-                    #        center_point = pre_center_point
-                    #        xyxy = pre_xyxy
-                    #        print ("bozhang debug change ball pos")
-                    #        ball_pos += 1
-                    #    else:
-                    #        ball_pos = 0
-                    #        pre_center_point = center_point 
-                    #        pre_xyxy = list(xyxy)
-                    #else:
-                    #    ball_pos = 0
-                    #    pre_center_point = center_point
-                    #    pre_xyxy = list(xyxy)
                     if ball_pos == 100:
                         x = np.matrix('0. 0. 0. 0.').T 
                         P = np.matrix(np.eye(4))*1000 # initial uncertainty
@@ -259,9 +241,9 @@ def run(
                     xyxy[2] = center_point_final[1]-5
                     xyxy[3] = center_point_final[1]+5
                      
-                    print ("bozhang final center_point", center_point, gn)    
-                    center_point_normalized = center_point[0]/gn[0], center_point[1]/gn[1]
-                    print("bozhang center_point_normalized", center_point_normalized) 
+                    print ("bozhang final center_point", center_point_final, gn)    
+                    #center_point_normalized = center_point[0]/gn[0], center_point[1]/gn[1]
+                    #print("bozhang center_point_normalized", center_point_normalized) 
                     if save_txt:  # Write to file
                         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
                         #line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
